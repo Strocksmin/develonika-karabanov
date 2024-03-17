@@ -1,60 +1,24 @@
-package org.example;
+package org.example.controller;
 
 import org.apache.commons.validator.routines.EmailValidator;
-import org.example.dao.impl.ContactDaoImpl;
 import org.example.model.Contact;
+import org.example.service.impl.ContactServiceImpl;
 import org.example.utils.FileSerialization;
 
 import java.util.Scanner;
 
-public class MainContact {
-    ContactDaoImpl contactDao = new ContactDaoImpl();
-    public void work() {
-        boolean isBreak = false;
-        contactDao.setContacts((FileSerialization.read(
+public class ConsoleController {
+    ContactServiceImpl contactService;
+    Scanner scanner;
+
+    public ConsoleController(Scanner scanner) {
+        this.contactService = new ContactServiceImpl();
+        this.scanner = scanner;
+        contactService.setContacts((FileSerialization.read(
                 System.getProperty("user.dir") + "/src/main/resources/contacts.obj")));
-        System.out.println("Добро пожаловать в приложение \"Список контактов\"!");
-        System.out.println("1. Добавить контакт");
-        System.out.println("2. Посмотреть список контактов");
-        System.out.println("3. Найти контакт по имени");
-        System.out.println("4. Удалить контакт");
-        System.out.println("5. Выход");
-        Scanner scanner = new Scanner(System.in);
-        int answer;
-        while (!isBreak) {
-            System.out.print("Выберите действие (введите номер): ");
-            try {
-                answer = Integer.parseInt(scanner.next());
-            }
-            catch (Exception e) {
-                answer = 0;
-            }
-            switch (answer) {
-                case 1:
-                    addContactScanner(scanner);
-                    break;
-                case 2:
-                    getAllContactsScanner();
-                    break;
-                case 3:
-                    getContactByNameScanner(scanner);
-                    break;
-                case 4:
-                    deleteContactScanner(scanner);
-                    break;
-                case 5:
-                    System.out.print("До свидания!");
-                    isBreak = true;
-                    FileSerialization.write(System.getProperty("user.dir") + "/src/main/resources/contacts.obj",
-                            contactDao.getContacts());
-                    break;
-                default:
-                    System.out.println("Неправильный номер!");
-            }
-        }
-        scanner.close();
     }
-    private void addContactScanner(Scanner scanner) {
+
+    public void addContactScanner() {
         System.out.print("Введите имя контакта: ");
         String name = scanner.next();
         while (!name.matches("[a-zA-Z]+")) {
@@ -84,14 +48,14 @@ public class MainContact {
             email = scanner.next();
         }
         System.out.println("Контакт успешно добавлен.");
-        contactDao.addContact(new Contact(name, lastName, phone, email));
+        contactService.addContact(new Contact(name, lastName, phone, email));
     }
 
-    private void getAllContactsScanner() {
+    public void getAllContactsScanner() {
         System.out.print("Список контактов: ");
-        if (!contactDao.getContacts().isEmpty()) {
+        if (!contactService.getContacts().isEmpty()) {
             System.out.println();
-            for (Contact contact: contactDao.getContacts()){
+            for (Contact contact: contactService.getContacts()){
                 System.out.println(contact);
             }
         }
@@ -99,19 +63,20 @@ public class MainContact {
             System.out.println(" (пусто) ");
         }
     }
-    private void getContactByNameScanner(Scanner scanner) {
+
+    public void getContactByNameScanner() {
         System.out.print("Введите имя для поиска: ");
         String name = scanner.next();
         System.out.print("Результаты поиска: ");
-        if (contactDao.getContactByName(name) != null) {
-            System.out.println("\n" + contactDao.getContactByName(name));
+        if (contactService.getContactByName(name) != null) {
+            System.out.println("\n" + contactService.getContactByName(name));
         }
         else {
             System.out.println(" (пусто) ");
         }
     }
 
-    private void deleteContactScanner(Scanner scanner) {
+    public void deleteContactScanner() {
         System.out.print("Введите номер контакта для удаления: ");
         int id = -1;
         try {
@@ -119,13 +84,19 @@ public class MainContact {
         }
         catch (Exception ignored) { // simplified
         }
-        Contact contact = contactDao.getContactById(id);
+        Contact contact = contactService.getContactById(id);
         if (contact != null) {
-            contactDao.deleteContact(id);
+            contactService.deleteContact(id);
             System.out.println("Контакт " + contact.getContactInfo() + " успешно удален.");
         }
         else {
             System.out.print("Такого контакта не существует\n");
         }
+    }
+
+    public void closeApp() {
+        System.out.print("До свидания!");
+        FileSerialization.write(System.getProperty("user.dir") + "/src/main/resources/contacts.obj",
+                contactService.getContacts());
     }
 }

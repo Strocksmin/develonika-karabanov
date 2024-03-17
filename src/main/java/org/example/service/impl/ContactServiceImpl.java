@@ -1,18 +1,17 @@
-package org.example.dao.impl;
+package org.example.service.impl;
 
-import org.example.dao.ContactDao;
+import org.example.service.ContactService;
 import org.example.model.Contact;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-public class ContactDaoImpl implements ContactDao {
+public class ContactServiceImpl implements ContactService {
     private List<Contact> contacts = new ArrayList<>();
     @Override
     public void addContact(Contact contact) {
-        contact.setContactId(contacts.size() + 1); // плохая реализация
+        contact.setContactId(contacts.size() + 1);
         contacts.add(contact);
     }
 
@@ -23,25 +22,25 @@ public class ContactDaoImpl implements ContactDao {
     }
 
     @Override
-    public Contact getContactByName(String name) {
+    public Contact getContactByName(String name) { // чувствителен к регистру
         ListIterator<Contact> listIterator = contacts.listIterator();
-        Contact contact = null;
+        Contact contact;
         while (listIterator.hasNext()) {
             contact = listIterator.next();
             if (contact.getFirstName().equals(name)) return contact;
         }
-        return contact;
+        return null;
     }
 
     @Override
     public Contact getContactById(int id) {
         ListIterator<Contact> listIterator = contacts.listIterator();
-        Contact contact = null;
+        Contact contact;
         while (listIterator.hasNext()) {
             contact = listIterator.next();
             if (contact.getContactId() == id) return contact;
         }
-        return contact;
+        return null;
     }
 
     @Override
@@ -54,12 +53,11 @@ public class ContactDaoImpl implements ContactDao {
         this.contacts = contacts;
     }
 
-    public List<Contact> resortContacts(List<Contact> contacts, int id) {
+    public void resortContacts(List<Contact> contacts, int id) {
         for (Contact contact: contacts) {
             if (contact.getContactId() > id) {
                 contact.setContactId(contact.getContactId() - 1);
             }
         }
-        return contacts;
     }
 }
