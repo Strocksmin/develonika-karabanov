@@ -9,7 +9,6 @@ import java.util.Scanner;
 public class ConsoleController {
     ContactServiceImpl contactService;
     Scanner scanner;
-
     public ConsoleController(Scanner scanner) {
         this.contactService = new ContactServiceImpl();
         this.scanner = scanner;
