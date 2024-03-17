@@ -1,7 +1,7 @@
 package org.example.service.impl;
 
-import org.example.service.ContactService;
 import org.example.model.Contact;
+import org.example.service.ContactService;
 
 import java.util.ArrayList;
 import java.util.List;
