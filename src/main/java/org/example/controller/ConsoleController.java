@@ -4,7 +4,6 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.example.model.Contact;
 import org.example.service.impl.ContactServiceImpl;
 import org.example.utils.FileSerialization;
-
 import java.util.Scanner;
 
 public class ConsoleController {
